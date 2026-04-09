@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<body style="background:black;color:#00ff9f;font-family:monospace">
+
+<h1>POLYMARKET BOT</h1>
+
+<button onclick="start()">START</button>
+<button onclick="stop()">STOP</button>
+
+<h2 id="balance"></h2>
+
+<h3>Positions</h3>
+<div id="positions"></div>
+
+<h3>Logs</h3>
+<div id="logs"></div>
+
+<script>
+async function load() {
+  const res = await fetch("/status");
+  const data = await res.json();
+
+  document.getElementById("balance").innerText =
+    "Balance: " + data.balance;
+
+  document.getElementById("positions").innerHTML =
+    data.positions.map(p =>
+      `<div>${p.question} | ${p.pnl.toFixed(2)}</div>`
+    ).join("");
+
+  document.getElementById("logs").innerHTML =
+    data.logs.map(l => `<div>${l}</div>`).join("");
+}
+
+setInterval(load, 3000);
+
+function start() {
+  fetch("/start", { method: "POST" });
+}
+
+function stop() {
+  fetch("/stop", { method: "POST" });
+}
+</script>
+
+</body>
+</html>
